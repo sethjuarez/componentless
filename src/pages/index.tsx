@@ -2,15 +2,38 @@ import Head from "next/head";
 import Image from "next/image";
 import * as go from "gojs";
 import { ReactDiagram } from "gojs-react";
+import { useEffect, useState } from "react";
 import { initDiagram } from "@services/diagram";
+import { useSession } from "next-auth/react";
+import { useAppInsightsContext } from "@microsoft/applicationinsights-react-js";
 
 const handleModelChange = (changes: go.IncrementalData) => {
   console.log(changes);
 };
 
-const color = "#606060";
-
 export default function Home() {
+  const appInsights = useAppInsightsContext();
+  const [sent, setSent] = useState(false);
+  const { data, status } = useSession();
+    useEffect(() => {
+      const user = {
+        name: data?.user?.name || "",
+        email: data?.user?.email || "",
+        expires: data?.expires || "",
+        status: status,
+        host: window ? window.location.hostname : "unknown",
+      };
+      
+      if (
+        user.status === "authenticated" &&
+        !user.host.toLowerCase().includes("localhost") &&
+        !sent
+      ) {
+        console.log(user);
+        appInsights.trackEvent({ name: "User", properties: user });
+        setSent(true);
+      }
+    }, [data, status, appInsights, sent]);
   return (
     <>
       <Head>
