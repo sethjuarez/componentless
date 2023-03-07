@@ -303,7 +303,6 @@ const transformTemplate = $(
   )
 );
 
-
 export const initDiagram = () => {
   const diagram = $(go.Diagram, {
     "undoManager.isEnabled": true,
@@ -317,7 +316,7 @@ export const initDiagram = () => {
     layout: $(go.LayeredDigraphLayout, {
       alignOption: go.LayeredDigraphLayout.AlignAll,
       direction: 90,
-      initializeOption: go.LayeredDigraphLayout.InitDepthFirstIn,
+      //initializeOption: go.LayeredDigraphLayout.InitDepthFirstIn,
       layerSpacing: 50,
       columnSpacing: 100,
     }),
@@ -356,4 +355,164 @@ export const initDiagram = () => {
   diagram.nodeTemplateMap = templmap;
 
   return diagram;
+};
+
+export const initOverview = (): go.Overview => {
+  const $ = go.GraphObject.make;
+  const overview = $(go.Overview, {
+    contentAlignment: go.Spot.Center,
+    "box.resizable": true,
+  });
+  return overview;
+};
+
+export const initPalette = (): go.Palette => {
+  const $ = go.GraphObject.make;
+  const palette = $(go.Palette);
+  const templmap = new go.Map<string, go.Part>();
+  const paletteInputTemplate = $(
+    go.Node,
+    "Vertical",
+    { selectionAdorned: false },
+    $(
+      go.Panel,
+      "Auto",
+      $(go.Shape, "RoundedRectangle", {
+        stroke: "dodgerblue",
+        fill: "white",
+        width: 200,
+      }),
+      $(
+        go.Panel,
+        "Spot",
+        {
+          width: 200,
+        },
+        $(go.TextBlock, "\uEC7D", {
+          ...iconDesc("16pt"),
+          alignment: new go.Spot(0, 0.5),
+          margin: 5,
+        }),
+        $(go.TextBlock, new go.Binding("text", "text").makeTwoWay(), {
+          font: "12pt Segoe UI",
+          alignment: new go.Spot(0, 0.5, 90, 0),
+          margin: 5,
+          width: 130,
+          textAlign: "left",
+        }),
+        $(go.TextBlock, "\uEF66", {
+          ...iconDesc("16pt"),
+          alignment: new go.Spot(1, 0.5, -16, 0),
+          margin: 5,
+        })
+      )
+    )
+  );
+  const paletteOutputTemplate = $(
+    go.Node,
+    "Vertical",
+    { selectionAdorned: false },
+    $(
+      go.Panel,
+      "Auto",
+      $(go.Shape, "RoundedRectangle", {
+        stroke: "green",
+        fill: "white",
+        width: 200,
+      }),
+      $(
+        go.Panel,
+        "Spot",
+        {
+          width: 200,
+        },
+        $(go.TextBlock, "\uEF7D", {
+          ...iconDesc("16pt"),
+          stroke: "green",
+          alignment: new go.Spot(0, 0.5),
+          margin: 5,
+        }),
+        $(go.TextBlock, new go.Binding("text", "text"), {
+          font: "12pt Segoe UI",
+          alignment: new go.Spot(0, 0.5, 90, 0),
+          margin: 5,
+          width: 130,
+          textAlign: "left",
+          stroke: "green",
+        }),
+        $(go.TextBlock, "\uEF66", {
+          ...iconDesc("16pt"),
+          stroke: "green",
+          alignment: new go.Spot(1, 0.5, -16, 0),
+          margin: 5,
+        })
+      )
+    )
+  );
+
+  const paletteTransformTemplate = $(
+    go.Node,
+    "Vertical",
+    { selectionAdorned: false },
+    $(
+      go.Panel,
+      "Auto",
+      $(
+        go.Shape,
+        "RoundedRectangle",
+        {
+          stroke: "dodgerblue",
+          fill: "white",
+          width: 200,
+        },
+        new go.Binding("stroke", "color", (c) => c || "dodgerblue")
+      ),
+      $(
+        go.Panel,
+        "Spot",
+        {
+          width: 200,
+        },
+        $(
+          go.Panel,
+          "Auto",
+          {},
+          $(
+            go.Picture,
+            {
+              width: 24,
+              height: 24,
+              margin: 5,
+              alignment: new go.Spot(0, 0.5),
+              scale: 1,
+            },
+            new go.Binding("source", "image")
+          )
+        ),
+        $(go.TextBlock, new go.Binding("text", "title").makeTwoWay(), {
+          font: "10pt Segoe UI",
+          alignment: new go.Spot(0, 0.5, 100, 0),
+          margin: 5,
+          width: 130,
+          textAlign: "left",
+        }),
+        $(
+          go.TextBlock,
+          "\uEF66",
+          {
+            ...iconDesc("16pt"),
+            alignment: new go.Spot(1, 0.5, -16, 0),
+            margin: 5,
+          },
+          new go.Binding("stroke", "color", (c) => c || "dodgerblue")
+        )
+      )
+    )
+  );
+  templmap.add("input", paletteInputTemplate);
+  templmap.add("transform", paletteTransformTemplate);
+  templmap.add("output", paletteOutputTemplate);
+  palette.nodeTemplateMap = templmap;
+
+  return palette;
 };

@@ -368,3 +368,37 @@ template {
 [hidden] {
   display: none;
 }
+
+.workflowPalette {
+  border: solid 1px #c0c0c0;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 250px;
+  height: calc(80vh - 20px);
+  z-index: 200;
+  border-radius: 5px;
+  background: white;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+
+.workflowOverview {
+  border: solid 1px #c0c0c0;
+  position: absolute;
+  top: calc(80vh + 20px);
+  left: 20px;
+  width: 250px;
+  height: calc(20vh - 40px);
+  z-index: 100;
+  border-radius: 5px;
+  background: white;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+
+.workflowDiagram {
+  width: "100vw";
+  height: "100vh";
+  position: absolute;
+  top: 0;
+  left: 0;
+}

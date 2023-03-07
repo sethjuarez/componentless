@@ -1,9 +1,9 @@
 import Head from "next/head";
 import Image from "next/image";
 import * as go from "gojs";
-import { ReactDiagram } from "gojs-react";
-import { useEffect, useState } from "react";
-import { initDiagram } from "@services/diagram";
+import { ReactDiagram, ReactOverview, ReactPalette } from "gojs-react";
+import { useEffect, useState, useRef } from "react";
+import { initDiagram, initOverview, initPalette } from "@services/diagram";
 import { useSession } from "next-auth/react";
 import { useAppInsightsContext } from "@microsoft/applicationinsights-react-js";
 
@@ -35,31 +35,7 @@ export default function Home() {
     }
   }, [data, status, appInsights, sent]);
 
-  const useFirst = true;
-  /*{
-      key: 1,
-      title: "SQL Server Query",
-      text: "Fetch data from SQL Server",
-      image: "/icons/SQL-Database.svg",
-      loc: "400 0",
-      category: "transform",
-    },
-    {
-      key: 2,
-      title: "Text Analytics Query",
-      text: "Run Text Analytics",
-      image: "/icons/Cognitive-Services.svg",
-      loc: "400 0",
-      category: "transform",
-    },
-    {
-      key: 3,
-      title: "Custom Script Processor",
-      text: "Run Script",
-      image: "/icons/Code.svg",
-      loc: "400 0",
-      category: "transform",
-    },*/
+  const diagramRef = useRef<ReactDiagram>(null);
 
   const data1 = [
     {
@@ -143,22 +119,63 @@ export default function Home() {
     { key: -9, from: 6, fromPort: "tsucout", to: 7, toPort: "out" },
   ];
 
-  const data2 = [
-    { key: 0, text: "input1", color: "lightblue", category: "input" },
-    { key: 1, text: "input2", color: "orange" },
-    { key: 2, text: "Gamma", color: "lightgreen" },
-    { key: 3, text: "Delta", color: "pink" },
-    { key: 4, text: "Farsi", color: "#c0c0c0" },
-    { key: 5, text: "API Call", color: "#cf5555" },
-  ];
+   const paletteItems = [
+     {
+       key: 0,
+       text: "input",
+       category: "input",
+     },
+     {
+       key: 2,
+       title: "Cognitive Services",
+       text: "Fetch data from Azure Cognitive Services",
+       image: "/icons/Search-Services.svg",
+       loc: "0 0",
+       category: "transform",
+     },
 
-  const link2 = [
-    { key: -1, from: 0, to: 3 },
-    { key: -2, from: 1, to: 2 },
-    { key: -3, from: 3, to: 4 },
-    { key: -4, from: 4, to: 5 },
-    { key: -5, from: 2, to: 5 },
-  ];
+     {
+       key: 3,
+       title: "Azure Functions",
+       text: "Process using Azure Functions",
+       image: "/icons/Function-Apps.svg",
+       category: "transform",
+     },
+     {
+       key: 4,
+       title: "SQL Server",
+       text: "Fetch data from SQL Server",
+       image: "/icons/SQL-Database.svg",
+       category: "transform",
+     },
+     {
+       key: 8,
+       title: "Package Text",
+       text: "Process prompt template",
+       image: "/icons/Cubes.svg",
+       category: "transform",
+     },
+     {
+       key: 5,
+       title: "Azure OpenAI",
+       text: "Send prompt to Azure OpenAI",
+       image: "/icons/OpenAI_Logo.svg",
+       category: "transform",
+       color: "black",
+     },
+     {
+       key: 6,
+       title: "Custom Script",
+       text: "Post Processing",
+       image: "/icons/Code.svg",
+       category: "transform",
+     },
+     {
+       key: 7,
+       text: "output",
+       category: "output",
+     },
+   ];
 
   return (
     <>
@@ -169,12 +186,23 @@ export default function Home() {
         <link rel="icon" href="/favicon.svg" />
       </Head>
       <main>
+        <ReactPalette
+          initPalette={initPalette}
+          divClassName="workflowPalette"
+          nodeDataArray={paletteItems}
+        />
+        <ReactOverview
+          initOverview={initOverview}
+          divClassName="workflowOverview"
+          observedDiagram={diagramRef.current?.getDiagram() || null}
+        />
         <ReactDiagram
+          ref={diagramRef}
           initDiagram={initDiagram}
-          divClassName="diagram-component"
+          divClassName="workflowDiagram"
           style={{ height: "100vh", width: "100vw" }}
-          nodeDataArray={useFirst ? data1 : data2}
-          linkDataArray={useFirst ? link1 : link2}
+          nodeDataArray={data1}
+          linkDataArray={link1}
           onModelChange={handleModelChange}
         />
       </main>
