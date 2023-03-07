@@ -1,227 +1,331 @@
 import * as go from "gojs";
+const $ = go.GraphObject.make;
 
-export const initDiagram = () => {
-  const $ = go.GraphObject.make;
-  // set your license key here before creating the diagram: go.Diagram.licenseKey = "...";
-  const diagram = $(go.Diagram, {
-    "undoManager.isEnabled": true,
-    "clickCreatingTool.archetypeNodeData": {
-      text: "new node",
-      color: "lightblue",
+const iconDesc = (sz: string, color?: string): any => {
+  return {
+    font: `${sz} FabricMDL2Icons`,
+    stroke: color || "dodgerblue",
+    spacingAbove: 7,
+    spacingBelow: -2,
+    alignment: go.Spot.Center,
+    verticalAlignment: go.Spot.Center,
+    mouseEnter: function (e: go.InputEvent, obj: go.GraphObject) {
+      obj.background = "#e3e3e3";
     },
-    model: new go.GraphLinksModel({
-      linkKeyProperty: "key",
-    }),
-  });
+    mouseLeave: function (e: go.InputEvent, obj: go.GraphObject) {
+      obj.background = "transparent";
+    },
+  };
+};
 
-  const iconDesc = (sz: string, color?: string): any => {
-    return {
-      font: `${sz} FabricMDL2Icons`,
-      stroke: color || "dodgerblue",
-      spacingAbove: 7,
-      spacingBelow: -2,
-      alignment: go.Spot.Center,
-      verticalAlignment: go.Spot.Center,
+const inputTemplate = $(
+  go.Node,
+  "Vertical",
+  { selectionAdorned: false },
+  $(
+    go.Panel,
+    "Auto",
+    $(go.Shape, "RoundedRectangle", {
+      stroke: "dodgerblue",
+      fill: "white",
       mouseEnter: function (e: go.InputEvent, obj: go.GraphObject) {
-        obj.background = "#e3e3e3";
+        obj.background = "#EFF6FC";
       },
       mouseLeave: function (e: go.InputEvent, obj: go.GraphObject) {
-        obj.background = "transparent";
+        obj.background = "#ffffff";
       },
-    };
-  };
-
-  const inputTemplate = $(
-    go.Part,
-    "Vertical",
-    { selectionAdorned: false },
+    }),
+    $(
+      go.Panel,
+      "Horizontal",
+      $(go.TextBlock, "\uEC7D", {
+        ...iconDesc("16pt"),
+        alignment: go.Spot.Left,
+        margin: 10,
+      }),
+      $(go.TextBlock, new go.Binding("text", "text").makeTwoWay(), {
+        column: 2,
+        columnSpan: 3,
+        font: "12pt Segoe UI",
+        alignment: go.Spot.Left,
+        margin: 10,
+      })
+    )
+  ),
+  $(
+    go.Panel,
+    "Horizontal",
+    { alignment: go.Spot.TopCenter },
     $(
       go.Panel,
       "Auto",
-      $(go.Shape, "RoundedRectangle", {
-        stroke: "dodgerblue",
+      $(go.Shape, "Rectangle", {
+        fill: "#c0c0c0",
+        stroke: "#606060",
+        height: 10,
+        width: 10,
+        portId: "io",
+        fromSpot: go.Spot.BottomCenter,
+        fromLinkable: true,
+        cursor: "pointer",
+      })
+    )
+  )
+);
+
+const outputTemplate = $(
+  go.Node,
+  "Vertical",
+  { selectionAdorned: false },
+  $(
+    go.Panel,
+    "Horizontal",
+    { alignment: go.Spot.TopCenter },
+    $(
+      go.Panel,
+      "Auto",
+      $(go.Shape, "Rectangle", {
+        fill: "#c0c0c0",
+        stroke: "#606060",
+        height: 10,
+        width: 10,
+        portId: "out",
+        toSpot: go.Spot.TopCenter,
+        toLinkable: true,
+        cursor: "pointer",
+      })
+    )
+  ),
+  $(
+    go.Panel,
+    "Auto",
+    $(go.Shape, "RoundedRectangle", {
+      stroke: "green",
+      fill: "white",
+      mouseEnter: function (e: go.InputEvent, obj: go.GraphObject) {
+        obj.background = "#EFF6FC";
+      },
+      mouseLeave: function (e: go.InputEvent, obj: go.GraphObject) {
+        obj.background = "#ffffff";
+      },
+    }),
+    $(
+      go.Panel,
+      "Horizontal",
+      $(go.TextBlock, "\uEC61", {
+        ...iconDesc("16pt"),
+        stroke: "green",
+        alignment: go.Spot.Left,
+        margin: 10,
+      }),
+      $(go.TextBlock, new go.Binding("text", "text").makeTwoWay(), {
+        column: 2,
+        columnSpan: 3,
+        stroke: "green",
+        font: "12pt Segoe UI",
+        alignment: go.Spot.Left,
+        margin: 10,
+      })
+    )
+  )
+);
+
+const transformTemplate = $(
+  go.Node,
+  "Vertical",
+  { selectionAdorned: false },
+  $(
+    go.Panel,
+    "Auto",
+    $(go.Shape, "Circle", {
+      fill: "#c0c0c0",
+      stroke: "#606060",
+      height: 10,
+      width: 10,
+      portId: "tin",
+      toSpot: go.Spot.TopCenter,
+      toLinkable: true,
+      cursor: "pointer",
+    })
+  ),
+  $(
+    go.Panel,
+    "Auto",
+    {},
+    $(
+      go.Shape,
+      "RoundedRectangle",
+      {
         fill: "white",
+        stroke: "dodgerblue",
+      },
+      new go.Binding("stroke", "color", (c) => c || "dodgerblue")
+    ),
+    $(
+      go.Panel,
+      "Table",
+      {
+        defaultSeparatorPadding: 3,
         mouseEnter: function (e: go.InputEvent, obj: go.GraphObject) {
           obj.background = "#EFF6FC";
         },
         mouseLeave: function (e: go.InputEvent, obj: go.GraphObject) {
           obj.background = "#ffffff";
         },
-      }),
+        click: function (e: go.InputEvent, obj: go.GraphObject) {
+          console.log(obj);
+        },
+      },
       $(
         go.Panel,
-        "Horizontal",
-        $(go.TextBlock, "\uEC7D", {
-          ...iconDesc("16pt"),
+        "TableRow",
+        { row: 0 },
+        $(go.TextBlock, new go.Binding("text", "title").makeTwoWay(), {
+          column: 0,
+          columnSpan: 5,
+          font: "10pt Segoe UI",
+          stroke: "white",
           alignment: go.Spot.Left,
-          margin: 5,
+        })
+      ),
+      $(
+        go.Panel,
+        "TableRow",
+        { row: 1 },
+        $(go.Picture, new go.Binding("source", "image").makeTwoWay(), {
+          column: 0,
+          width: 52,
+          height: 52,
+          scale: 1,
+          columnSpan: 2,
+          alignment: go.Spot.Center,
         }),
         $(go.TextBlock, new go.Binding("text", "text").makeTwoWay(), {
           column: 2,
           columnSpan: 3,
           font: "12pt Segoe UI",
           alignment: go.Spot.Left,
-          margin: 5,
         })
-      )
-    ),
-    $(
-      go.Panel,
-      "Horizontal",
-      { alignment: go.Spot.TopCenter },
+      ),
       $(
         go.Panel,
-        "Auto",
-        $(go.Shape, "Rectangle", {
-          fill: "#c0c0c0",
-          stroke: "#606060",
-          height: 10,
-          width: 10,
-        })
-      )
+        "TableRow",
+        { row: 2 },
+        $(
+          go.TextBlock,
+          "\uE74D",
+          { ...iconDesc("16pt"), column: 0 },
+          new go.Binding("stroke", "color", (c) => c || "dodgerblue")
+        ),
+        $(
+          go.TextBlock,
+          "\uF03A",
+          { ...iconDesc("16pt"), column: 1 },
+          new go.Binding("stroke", "color", (c) => c || "dodgerblue")
+        ),
+        $(
+          go.TextBlock,
+          "\uE8C8",
+          { ...iconDesc("16pt"), column: 2 },
+          new go.Binding("stroke", "color", (c) => c || "dodgerblue")
+        ),
+        $(go.TextBlock, " ", { column: 3 }),
+        $(
+          go.TextBlock,
+          "\uF2DF",
+          { ...iconDesc("16pt"), column: 4 },
+          new go.Binding("stroke", "color", (c) => c || "dodgerblue")
+        )
+      ),
+      $(
+        go.RowColumnDefinition,
+        { row: 0, background: "dodgerblue" },
+        new go.Binding("background", "color", (c) => c || "dodgerblue")
+      ),
+      $(go.RowColumnDefinition, { row: 1, height: 72 }),
+      $(go.RowColumnDefinition, { row: 2, height: 42 }),
+      $(go.RowColumnDefinition, { column: 0, width: 42 }),
+      $(go.RowColumnDefinition, { column: 1, width: 42 }),
+      $(go.RowColumnDefinition, { column: 2, width: 42 }),
+      $(go.RowColumnDefinition, { column: 3, width: 42 }),
+      $(go.RowColumnDefinition, { column: 4, width: 42 })
     )
-  );
-
-  const transformTemplate = $(
-    go.Part,
-    "Vertical",
-    { selectionAdorned: false },
+  ),
+  $(
+    go.Panel,
+    "Horizontal",
+    { alignment: go.Spot.TopCenter },
     $(
       go.Panel,
       "Auto",
-      $(go.Shape, "Circle", {
-        fill: "#c0c0c0",
+      $(go.Shape, "Rectangle", {
+        fill: "white",
         stroke: "#606060",
-        height: 10,
-        width: 10,
+        height: 16,
+        portId: "terrout",
+        fromLinkable: true,
+        fromSpot: go.Spot.BottomCenter,
+      }),
+      $(go.TextBlock, "\uF13D", {
+        ...iconDesc("14pt", "red"),
+        spacingAbove: 5,
+        spacingBelow: -2,
       })
     ),
     $(
       go.Panel,
       "Auto",
-      {},
-      $(go.Shape, "RoundedRectangle", {
+      $(go.Shape, "Rectangle", {
         fill: "white",
-        stroke: "dodgerblue",
-      }),
-      $(
-        go.Panel,
-        "Table",
-        {
-          defaultSeparatorPadding: 3,
-          mouseEnter: function (e: go.InputEvent, obj: go.GraphObject) {
-            obj.background = "#EFF6FC";
-          },
-          mouseLeave: function (e: go.InputEvent, obj: go.GraphObject) {
-            obj.background = "#ffffff";
-          },
-          click: function (e: go.InputEvent, obj: go.GraphObject) {
-            console.log(obj);
-          },
-        },
-        $(
-          go.Panel,
-          "TableRow",
-          { row: 0 },
-          $(go.TextBlock, new go.Binding("text", "title").makeTwoWay(), {
-            column: 0,
-            columnSpan: 5,
-            font: "10pt Segoe UI",
-            stroke: "white",
-            alignment: go.Spot.Left,
-          })
-        ),
-        $(
-          go.Panel,
-          "TableRow",
-          { row: 1 },
-          $(go.Picture, new go.Binding("source", "image").makeTwoWay(), {
-            column: 0,
-            width: 52,
-            height: 52,
-            scale: 1,
-            columnSpan: 2,
-            alignment: go.Spot.Center,
-          }),
-          $(go.TextBlock, new go.Binding("text", "text").makeTwoWay(), {
-            column: 2,
-            columnSpan: 3,
-            font: "12pt Segoe UI",
-            alignment: go.Spot.Left,
-          })
-        ),
-        $(
-          go.Panel,
-          "TableRow",
-          { row: 2 },
-          $(go.TextBlock, "\uE74D", { ...iconDesc("16pt"), column: 0 }),
-          $(go.TextBlock, "\uF03A", { ...iconDesc("16pt"), column: 1 }),
-          $(go.TextBlock, "\uE8C8", { ...iconDesc("16pt"), column: 2 }),
-          $(go.TextBlock, " ", { column: 3 }),
-          $(go.TextBlock, "\uF2DF", { ...iconDesc("16pt"), column: 4 })
-        ),
-        $(go.RowColumnDefinition, { row: 0, background: "dodgerblue" }),
-        $(go.RowColumnDefinition, { row: 1, height: 72 }),
-        $(go.RowColumnDefinition, { row: 2, height: 42 }),
-        $(go.RowColumnDefinition, { column: 0, width: 42 }),
-        $(go.RowColumnDefinition, { column: 1, width: 42 }),
-        $(go.RowColumnDefinition, { column: 2, width: 42 }),
-        $(go.RowColumnDefinition, { column: 3, width: 42 }),
-        $(go.RowColumnDefinition, { column: 4, width: 42 })
-      )
+        stroke: "white",
+        height: 16,
+        width: 32,
+      })
     ),
     $(
       go.Panel,
-      "Horizontal",
-      { alignment: go.Spot.TopCenter },
-      $(
-        go.Panel,
-        "Auto",
-        $(go.Shape, "Rectangle", {
-          fill: "white",
-          stroke: "#606060",
-          height: 16,
-        }),
-        $(go.TextBlock, "\uF13D", {
-          ...iconDesc("14pt", "red"),
-          spacingAbove: 5,
-          spacingBelow: -2,
-        })
-      ),
-      $(
-        go.Panel,
-        "Auto",
-        $(go.Shape, "Rectangle", {
-          fill: "white",
-          stroke: "white",
-          height: 16,
-          width: 32,
-        })
-      ),
-      $(
-        go.Panel,
-        "Auto",
-        $(go.Shape, "Rectangle", {
-          fill: "white",
-          stroke: "#606060",
-          height: 16,
-          shadowVisible: true,
-        }),
-        $(go.TextBlock, "\uF13E", {
-          ...iconDesc("14pt", "green"),
-          spacingAbove: 5,
-          spacingBelow: -2,
-        })
-      )
+      "Auto",
+      $(go.Shape, "Rectangle", {
+        fill: "white",
+        stroke: "#606060",
+        height: 16,
+        shadowVisible: true,
+        portId: "tsucout",
+        fromLinkable: true,
+        fromSpot: go.Spot.BottomCenter,
+      }),
+      $(go.TextBlock, "\uF13E", {
+        ...iconDesc("14pt", "green"),
+        spacingAbove: 5,
+        spacingBelow: -2,
+      })
     )
-  );
+  )
+);
+
+
+export const initDiagram = () => {
+  const diagram = $(go.Diagram, {
+    "undoManager.isEnabled": true,
+    model: new go.GraphLinksModel({
+      linkKeyProperty: "key",
+      linkFromKeyProperty: "from",
+      linkFromPortIdProperty: "fromPort",
+      linkToKeyProperty: "to",
+      linkToPortIdProperty: "toPort",
+    }),
+    layout: $(go.LayeredDigraphLayout, {
+      alignOption: go.LayeredDigraphLayout.AlignAll,
+      direction: 90,
+      initializeOption: go.LayeredDigraphLayout.InitDepthFirstIn,
+      layerSpacing: 50,
+      columnSpacing: 100,
+    }),
+  });
 
   diagram.nodeTemplate = $(
-    go.Part,
-    "Auto",
-    new go.Binding("location", "loc", go.Point.parse).makeTwoWay(
-      go.Point.stringify
-    ),
+    go.Node,
+    "Auto", // the Shape will go around the TextBlock
     $(
       go.Shape,
       "RoundedRectangle",
@@ -231,15 +335,24 @@ export const initDiagram = () => {
     ),
     $(
       go.TextBlock,
-      { margin: 8, editable: true },
+      { margin: 8, editable: true }, // some room around the text
       new go.Binding("text").makeTwoWay()
     )
+  );
+
+  diagram.linkTemplate = $(
+    go.Link,
+    { curve: go.Link.Bezier },
+    $(go.Shape, { strokeWidth: 1, stroke: "#c0c0c0" }),
+    $(go.Shape, { toArrow: "Standard", stroke: "#c0c0c0" })
   );
 
   const templmap = new go.Map<string, go.Part>();
   templmap.add("transform", transformTemplate);
   templmap.add("input", inputTemplate);
+  templmap.add("output", outputTemplate);
   templmap.add("", diagram.nodeTemplate);
+
   diagram.nodeTemplateMap = templmap;
 
   return diagram;
