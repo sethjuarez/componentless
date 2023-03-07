@@ -100,6 +100,14 @@ export default function Home() {
       category: "transform",
     },
     {
+      key: 8,
+      title: "Package Text (8)",
+      text: "Process prompt template",
+      image: "/icons/Cubes.svg",
+      loc: "400 0",
+      category: "transform",
+    },
+    {
       key: 5,
       title: "Azure OpenAI Service (5)",
       text: "Send prompt to Azure OpenAI",
@@ -111,7 +119,7 @@ export default function Home() {
     {
       key: 6,
       title: "Custom Script Processor (6)",
-      text: "Custom Processing",
+      text: "Post Processing",
       image: "/icons/Code.svg",
       loc: "400 0",
       category: "transform",
@@ -127,8 +135,9 @@ export default function Home() {
   const link1: any = [
     { key: -1, from: 0, fromPort: "io", to: 2, toPort: "tin" },
     { key: -3, from: 1, fromPort: "io", to: 4, toPort: "tin" },
-    { key: -5, from: 3, fromPort: "tsucout", to: 5, toPort: "tin" },
-    { key: -6, from: 2, fromPort: "tsucout", to: 5, toPort: "tin" },
+    { key: -5, from: 3, fromPort: "tsucout", to: 8, toPort: "tin" },
+    { key: -6, from: 2, fromPort: "tsucout", to: 8, toPort: "tin" },
+    { key: -10, from: 8, fromPort: "tsucout", to: 5, toPort: "tin" },
     { key: -7, from: 4, fromPort: "tsucout", to: 3, toPort: "tin" },
     { key: -8, from: 5, fromPort: "tsucout", to: 6, toPort: "tin" },
     { key: -9, from: 6, fromPort: "tsucout", to: 7, toPort: "out" },
