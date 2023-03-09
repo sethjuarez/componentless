@@ -49,6 +49,7 @@ const inputTemplate = $(
         font: "12pt Segoe UI",
         alignment: go.Spot.Left,
         margin: 10,
+        editable: true,
       })
     )
   ),
@@ -125,6 +126,7 @@ const outputTemplate = $(
         font: "12pt Segoe UI",
         alignment: go.Spot.Left,
         margin: 10,
+        editable: true,
       })
     )
   )
@@ -205,6 +207,7 @@ const transformTemplate = $(
           columnSpan: 3,
           font: "12pt Segoe UI",
           alignment: go.Spot.Left,
+          editable: true,
         })
       ),
       $(
@@ -258,16 +261,19 @@ const transformTemplate = $(
     $(
       go.Panel,
       "Auto",
+      { portId: "terrout", fromLinkable: true, fromSpot: go.Spot.BottomCenter },
       $(go.Shape, "Rectangle", {
         fill: "white",
         stroke: "#606060",
+        background: "red",
+        width: 16,
         height: 16,
-        portId: "terrout",
-        fromLinkable: true,
-        fromSpot: go.Spot.BottomCenter,
       }),
       $(go.TextBlock, "\uF13D", {
-        ...iconDesc("14pt", "red"),
+        font: "14pt FabricMDL2Icons",
+        stroke: "red",
+        alignment: go.Spot.Center,
+        verticalAlignment: go.Spot.Center,
         spacingAbove: 5,
         spacingBelow: -2,
       })
@@ -285,14 +291,12 @@ const transformTemplate = $(
     $(
       go.Panel,
       "Auto",
+      { portId: "tsucout", fromLinkable: true, fromSpot: go.Spot.BottomCenter },
       $(go.Shape, "Rectangle", {
         fill: "white",
         stroke: "#606060",
         height: 16,
         shadowVisible: true,
-        portId: "tsucout",
-        fromLinkable: true,
-        fromSpot: go.Spot.BottomCenter,
       }),
       $(go.TextBlock, "\uF13E", {
         ...iconDesc("14pt", "green"),
@@ -314,7 +318,7 @@ export const initDiagram = () => {
       linkToPortIdProperty: "toPort",
     }),
     layout: $(go.LayeredDigraphLayout, {
-      alignOption: go.LayeredDigraphLayout.AlignAll,
+      //alignOption: go.LayeredDigraphLayout.AlignAll,
       direction: 90,
       //initializeOption: go.LayeredDigraphLayout.InitDepthFirstIn,
       layerSpacing: 50,
@@ -394,7 +398,7 @@ export const initPalette = (): go.Palette => {
           margin: 5,
         }),
         $(go.TextBlock, new go.Binding("text", "text").makeTwoWay(), {
-          font: "12pt Segoe UI",
+          font: "10pt Segoe UI",
           alignment: new go.Spot(0, 0.5, 90, 0),
           margin: 5,
           width: 130,
@@ -433,7 +437,7 @@ export const initPalette = (): go.Palette => {
           margin: 5,
         }),
         $(go.TextBlock, new go.Binding("text", "text"), {
-          font: "12pt Segoe UI",
+          font: "10pt Segoe UI",
           alignment: new go.Spot(0, 0.5, 90, 0),
           margin: 5,
           width: 130,
